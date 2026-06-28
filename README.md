@@ -13,5 +13,7 @@ Features
 - Cursor pagination
 - Category filtering
 - Docker support
-- Swagger documentation
+
+Swagger documentation
+![alt text](image.png)
 
