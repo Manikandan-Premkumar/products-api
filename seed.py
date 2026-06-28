@@ -1,18 +1,30 @@
+import os
 import random
 from datetime import datetime, timedelta
 
 from faker import Faker
+from dotenv import load_dotenv
 import psycopg
+
+load_dotenv()
 
 fake = Faker()
 
-conn = psycopg.connect(
-    host="localhost",
-    port=5433,
-    dbname="products",
-    user="postgres",
-    password="postgres123"
-)
+# Use DATABASE_URL if available, otherwise fall back to individual env vars
+database_url = os.getenv("DATABASE_URL")
+if database_url:
+    if database_url.startswith("postgres://"):
+        database_url = database_url.replace("postgres://", "postgresql://", 1)
+    conn = psycopg.connect(database_url)
+else:
+    conn = psycopg.connect(
+        host=os.getenv("DB_HOST", "localhost"),
+        port=int(os.getenv("DB_PORT", "5433")),
+        dbname=os.getenv("DB_NAME", "products"),
+        user=os.getenv("DB_USER", "postgres"),
+        password=os.getenv("DB_PASSWORD", "postgres123"),
+        sslmode=os.getenv("DB_SSLMODE", "require"),
+    )
 
 cursor = conn.cursor()
 
@@ -64,3 +76,4 @@ cursor.close()
 conn.close()
 
 print("Finished")
+
