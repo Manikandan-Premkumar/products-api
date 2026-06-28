@@ -1,11 +1,16 @@
 import base64
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from psycopg.rows import dict_row
 
-from database import get_connection
+from database import get_connection, initialize_db
 
 app = FastAPI()
+
+
+@app.on_event("startup")
+def startup_event():
+    initialize_db()
 
 
 def encode_cursor(created_at, product_id):
@@ -26,7 +31,11 @@ def get_products(
     page_cursor: str = None
 ):
 
-    conn = get_connection()
+    try:
+        conn = get_connection()
+    except Exception as exc:
+        raise HTTPException(status_code=503, detail="Database unavailable") from exc
+
     db_cursor = conn.cursor(row_factory=dict_row)
 
     created_at = None
