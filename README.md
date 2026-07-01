@@ -1,5 +1,12 @@
 # Products API
 
+| Parameter   | Type    | Description                                |
+| ----------- | ------- | ------------------------------------------ |
+| limit       | integer | Number of products to return (default: 20) |
+| category    | string  | Filter by category                         |
+| page_cursor | string  | Cursor returned from the previous response |
+
+
 Tech Stack
 
 - FastAPI
